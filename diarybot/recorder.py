@@ -25,23 +25,31 @@ class GitRecorder:
             git_dir: str,
             diary_file_name: str,
             repo_class: Callable = git.Repo,
+            text_formatter: Callable = None,
     ) -> None:
         self._diary_file_name = diary_file_name
         self._repo = repo_class(git_dir)
         self._diary_file_path = os.path.join(git_dir, diary_file_name)
+        self._format = text_formatter or naive_format
 
     def append_text(self, text: str) -> None:
         """Append text message and push it to remote upstream."""
+        # TODO: make time zone configurable
         now = datetime.datetime.now(tzlocal.get_localzone())
         self._repo.remotes[0].pull()
-        self._write_record(now, text)
+        record = self._format(now, text)
+        self._write_record(record)
         self._repo.index.add(self._diary_file_name)
         self._repo.index.commit(_COMMIT_MESSAGE)
         self._repo.remotes[0].push()
 
-    def _write_record(self, time: datetime.datetime, text: str):
+    def _write_record(self, record: str) -> None:
         with open(self._diary_file_path, "at") as fobj:
-            fobj.write(_RECORD_PTRN.format(
-                time=time.strftime(_TIME_FORMAT),
-                text=text,
-            ))
+            fobj.write(record)
+
+
+def naive_format(time: datetime.datetime, text: str) -> str:
+    return _RECORD_PTRN.format(
+        time=time.strftime(_TIME_FORMAT),
+        text=text,
+    )
