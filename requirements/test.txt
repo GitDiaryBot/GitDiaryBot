@@ -6,9 +6,8 @@
 #    pip-compile-multi
 #
 -r base.txt
-attrs==19.3.0             # via pytest
 importlib-metadata==1.4.0  # via pluggy, pytest
-more-itertools==8.0.2     # via pytest, zipp
+more-itertools==8.1.0     # via pytest, zipp
 packaging==20.0           # via pytest
 pluggy==0.13.1            # via pytest
 py==1.8.1                 # via pytest

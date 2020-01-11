@@ -1,3 +1,4 @@
 GitPython
 python-telegram-bot
 tzlocal
+attrs

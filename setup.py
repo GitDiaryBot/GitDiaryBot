@@ -52,7 +52,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'diarybot=diarybot.cli:cli'
+            'GitDiaryBot=diarybot.cli:cli'
         ]
     },
     include_package_data=True,
