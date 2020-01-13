@@ -2,3 +2,4 @@ GitPython
 python-telegram-bot
 tzlocal
 attrs
+requests

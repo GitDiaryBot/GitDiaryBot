@@ -16,17 +16,31 @@ class TelegramReceiver:
 
     def __init__(self):
         self._tenants: Dict[int, GitRecorder] = {}
+        self._handlers = (
+            (Filters.text, self._on_text),
+            (Filters.location, self._on_location),
+        )
 
     def attach(self, bot: Updater):
-        bot.dispatcher.add_handler(MessageHandler(
-            filters=Filters.text,
-            callback=self._text_handler,
-        ))
+        for filters, callback in self._handlers:
+            bot.dispatcher.add_handler(MessageHandler(
+                filters=filters,
+                callback=callback,
+            ))
 
-    def _text_handler(self, update: Update, context: CallbackContext) -> None:
+    def _on_text(self, update: Update, context: CallbackContext) -> None:
         del context  # Only need information from update
         tenant = self._get_tenant(update.effective_user.id)
         tenant.recorder.append_text(update.message.text)
+        update.message.reply_text("Saved")
+
+    def _on_location(self, update: Update, context: CallbackContext) -> None:
+        del context  # Only need information from update
+        tenant = self._get_tenant(update.effective_user.id)
+        tenant.recorder.append_location(
+            update.message.location.latitude,
+            update.message.location.longitude,
+        )
         update.message.reply_text("Saved")
 
     def _get_tenant(self, user_id: int) -> Tenant:

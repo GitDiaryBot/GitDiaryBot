@@ -16,6 +16,7 @@ def load_tenant(user_id: int) -> 'Tenant':
     return Tenant(recorder=GitRecorder(
         git_dir=os.environ['DIARY_DIR'],
         diary_file_name=os.environ.get('DIARY_FILE', 'README.md'),
+        geolocation_api_key=os.environ.get('GEOLOCATION_API_KEY')
     ))
 
 
