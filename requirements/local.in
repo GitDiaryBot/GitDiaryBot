@@ -4,3 +4,4 @@ flake8
 pylint
 pycodestyle
 pip-compile-multi
+ipdb
