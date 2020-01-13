@@ -3,11 +3,13 @@
 import os
 import datetime
 import logging
-from typing import Callable
+from typing import Callable, List
 
 import git
 import tzlocal
 import requests
+
+from .text_handler import TextHandler
 
 
 logger = logging.getLogger(__name__)
@@ -36,23 +38,25 @@ class GitRecorder:
             geolocation_api_key: str = None,
             repo_class: Callable = git.Repo,
             text_formatter: Callable = None,
+            extra_text_handlers: List[TextHandler] = None,
     ) -> None:
         self._diary_file_name = diary_file_name
         self._repo = repo_class(git_dir)
         self._diary_file_path = os.path.join(git_dir, diary_file_name)
         self._format = text_formatter or naive_format
         self._geolocation_api_key = geolocation_api_key
+        self._text_handlers = extra_text_handlers or []
 
     def append_text(self, text: str) -> None:
         """Append text message and push it to remote upstream."""
-        # TODO: make time zone configurable
-        now = datetime.datetime.now(tzlocal.get_localzone())
         self._repo.remotes[0].pull()
-        record = self._format(now, text)
-        self._write_record(record)
-        self._repo.index.add(self._diary_file_name)
-        self._repo.index.commit(_COMMIT_MESSAGE)
+        self._write_text(text)
+        self._commit_all()
         self._repo.remotes[0].push()
+
+    def _commit_all(self):
+        self._repo.git.add(A=True)
+        self._repo.index.commit(_COMMIT_MESSAGE)
 
     def append_location(self, latitude: float, longitude: float) -> None:
         latlon = _LOCATION_FORMAT.format(
@@ -84,9 +88,14 @@ class GitRecorder:
             logger.exception("Failed to resolve address.")
         return ""
 
-    def _write_record(self, record: str) -> None:
+    def _write_text(self, text: str) -> None:
+        # TODO: make time zone configurable
+        now = datetime.datetime.now(tzlocal.get_localzone())
+        record = self._format(now, text)
         with open(self._diary_file_path, "at") as fobj:
             fobj.write(record)
+        for handler in self._text_handlers:
+            handler.handle_text(text)
 
 
 def naive_format(time: datetime.datetime, text: str) -> str:
