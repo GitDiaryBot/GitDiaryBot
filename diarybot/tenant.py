@@ -1,7 +1,7 @@
 import os
 import attr
 
-from .recorder import GitRecorder
+from .recorder import GitRecorder, GitSync
 from .buy_list import BuyList
 from .speech_to_text import SpeechToTextClient
 
@@ -21,7 +21,7 @@ def load_tenant(user_id: int) -> 'Tenant':
 def load_git_recorder() -> GitRecorder:
     base_dir = os.environ['DIARY_DIR']
     google_api_key = os.environ.get('DIARY_GOOGLE_API_KEY')
-    return GitRecorder(
+    recorder = GitRecorder(
         git_dir=base_dir,
         diary_file_name=os.environ.get('DIARY_FILE', 'README.md'),
         google_api_key=google_api_key,
@@ -30,6 +30,10 @@ def load_git_recorder() -> GitRecorder:
         ],
         speech_to_text=SpeechToTextClient(google_api_key=google_api_key),
     )
+    sync = GitSync(git_dir=base_dir)
+    recorder.before_write.append(sync.on_before_write)
+    recorder.after_write.append(sync.on_after_write)
+    return recorder
 
 
 @attr.s(slots=True, frozen=True, auto_attribs=True)

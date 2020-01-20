@@ -2,7 +2,6 @@ import io
 from unittest import mock, TestCase
 import datetime
 
-import git
 import pytz
 
 from diarybot.recorder import GitRecorder, naive_format
@@ -14,7 +13,6 @@ class GetRecorderTestCase(TestCase):
         self._recorder = GitRecorder(
             git_dir='dir',
             diary_file_name='file',
-            repo_class=lambda x: mock.MagicMock(spec=git.Repo),
             text_formatter=fake_format,
         )
 

@@ -33,38 +33,52 @@ _TRANSCRIPT_LANGUAGE_CODES = ("ru-RU", "en-US")
 _AUDIO_DIR = 'audio'
 
 
+class GitSync:
+    """Directory synchronization using Git repository."""
+
+    def __init__(self, git_dir: str, repo_class: Callable = git.Repo) -> None:
+        self._repo = repo_class(git_dir)
+
+    def on_before_write(self):
+        """Download remote changes."""
+        self._repo.remotes[0].pull()
+
+    def on_after_write(self):
+        """Upload local changes."""
+        self._repo.git.add(A=True)
+        self._repo.index.commit(_COMMIT_MESSAGE)
+        self._repo.remotes[0].push()
+
+
 class GitRecorder:  # pylint: disable=too-many-instance-attributes
-    """Git repo plain text diary storage."""
+    """Plain text diary storage."""
 
     def __init__(  # pylint: disable=too-many-arguments
             self,
             git_dir: str,
             diary_file_name: str,
             google_api_key: str = None,
-            repo_class: Callable = git.Repo,
             text_formatter: Callable = None,
             extra_text_handlers: List[TextHandler] = None,
             speech_to_text: SpeechToTextClient = None,
     ) -> None:
         self._diary_file_name = diary_file_name
         self._git_dir = git_dir
-        self._repo = repo_class(git_dir)
         self._diary_file_path = os.path.join(git_dir, diary_file_name)
         self._format = text_formatter or naive_format
         self._google_api_key = google_api_key
         self._text_handlers = extra_text_handlers or []
         self._speech_to_text = speech_to_text
+        self.before_write = []
+        self.after_write = []
 
     def append_text(self, text: str) -> None:
         """Append text message and push it to remote upstream."""
-        self._repo.remotes[0].pull()
+        for callback in self.before_write:
+            callback()
         self._write_text(text)
-        self._commit_all()
-        self._repo.remotes[0].push()
-
-    def _commit_all(self):
-        self._repo.git.add(A=True)
-        self._repo.index.commit(_COMMIT_MESSAGE)
+        for callback in self.after_write:
+            callback()
 
     def append_location(self, latitude: float, longitude: float) -> None:
         latlon = _LOCATION_FORMAT.format(
