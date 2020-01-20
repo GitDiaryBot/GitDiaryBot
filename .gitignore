@@ -71,3 +71,4 @@ firefox_profile
 CHANGELOG.rst
 stash.db
 Session.vim
+.DS_Store
