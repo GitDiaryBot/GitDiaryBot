@@ -8,14 +8,13 @@ from telegram.ext import (
     CallbackContext,
 )
 
-from .recorder import GitRecorder
-from .tenant import load_tenant, Tenant
+from .tenant import Tenant
 
 
 class TelegramReceiver:
 
     def __init__(self):
-        self._tenants: Dict[int, GitRecorder] = {}
+        self._tenants: Dict[int, Tenant] = {}
         self._handlers = (
             (Filters.text, self._on_text),
             (Filters.location, self._on_location),
@@ -38,21 +37,24 @@ class TelegramReceiver:
     def _on_location(self, update: Update, context: CallbackContext) -> None:
         del context  # Only need information from update
         tenant = self._get_tenant(update.effective_user.id)
-        tenant.recorder.append_location(
-            update.message.location.latitude,
-            update.message.location.longitude,
+        message = tenant.location_transformer.handle_coordinates(
+            latitude=update.message.location.latitude,
+            longitude=update.message.location.longitude,
         )
+        tenant.recorder.append_text(message)
         update.message.reply_text("Saved")
 
     def _on_voice(self, update: Update, context: CallbackContext) -> None:
         del context  # Only need information from update
         tenant = self._get_tenant(update.effective_user.id)
         tg_file = update.message.voice.get_file()
-        with tenant.recorder.append_audio(tg_file.file_id) as fobj:
+        with tenant.voice_transformer.file_writer(tg_file.file_id) as fobj:
             tg_file.download(out=fobj)
+        message = tenant.voice_transformer.handle_file_id(tg_file.file_id)
+        tenant.recorder.append_text(message)
         update.message.reply_text("Saved")
 
     def _get_tenant(self, user_id: int) -> Tenant:
         if user_id not in self._tenants:
-            self._tenants[user_id] = load_tenant(user_id)
+            self._tenants[user_id] = Tenant.load(user_id)
         return self._tenants[user_id]

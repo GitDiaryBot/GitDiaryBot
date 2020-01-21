@@ -1,37 +1,31 @@
-import io
-from unittest import mock, TestCase
-import datetime
+from unittest import TestCase
 
-import pytz
-
-from diarybot.recorder import GitRecorder, naive_format
+from diarybot.recorder import TextRecorder
 
 
 class GetRecorderTestCase(TestCase):
 
     def setUp(self):
-        self._recorder = GitRecorder(
-            git_dir='dir',
-            diary_file_name='file',
-            text_formatter=fake_format,
+        self._recorder = TextRecorder(
+            before_write=[self._on_before_write],
+            on_write=[self._on_write],
+            after_write=[self._on_after_write],
         )
+        self.calls = []
 
-    @mock.patch('diarybot.recorder.open', create=True)
-    def test_append_sample_text(self, mock_open):
-        mock_open.return_value = mock.MagicMock(spec=io.IOBase)
+    def test_append_sample_text(self):
         self._recorder.append_text('text')
-        file_handle = mock_open.return_value.__enter__.return_value
-        file_handle.write.assert_called_with('text')
+        assert self.calls == [
+            ('before_write',),
+            ('on_write', 'text'),
+            ('after_write',),
+        ]
 
+    def _on_before_write(self):
+        self.calls.append(('before_write',))
 
-def test_naive_formatter():
-    record = naive_format(
-        time=datetime.datetime(2014, 4, 14, 1, 2, 3, tzinfo=pytz.timezone('America/Chicago')),
-        text='text',
-    )
-    assert record == '\n2014/04/14 01:02:03 LMT -0551\n\ntext\n'
+    def _on_after_write(self):
+        self.calls.append(('after_write',))
 
-
-def fake_format(time: datetime.datetime, text: str) -> str:
-    del time  # ignore time for testability
-    return text
+    def _on_write(self, text):
+        self.calls.append(('on_write', text))

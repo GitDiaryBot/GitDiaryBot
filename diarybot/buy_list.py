@@ -16,11 +16,14 @@ class BuyList(TextHandler):
             self._append_item(item)
 
     def _match(self, text: str) -> str:
-        head, tail = text.split(None, 1)
-        head = head.lower()
+        parts = text.split(None, 1)
+        if not parts:
+            return None
+        head = parts[0].lower()
+        tail = parts[1].strip()
         for trigger in self._TRIGGERS:
             if head == trigger:
-                return tail.strip()
+                return tail
         return None
 
     def _append_item(self, text: str) -> None:
