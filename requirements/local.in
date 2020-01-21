@@ -5,3 +5,4 @@ pylint
 pycodestyle
 pip-compile-multi
 ipdb
+tox
