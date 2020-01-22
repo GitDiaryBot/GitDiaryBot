@@ -4,7 +4,7 @@ import requests
 
 
 _LOCATION_FORMAT = "Latitude: {latitude}\nLongitude: {longitude}"
-_GEOCODING_API = (
+GEOCODING_API = (
     "https://maps.googleapis.com/maps/api/geocode/json"
 )
 
@@ -25,6 +25,8 @@ class LocationTransformer:
             address = self._resolve_address(latitude, longitude)
             if address:
                 message = f"{latlon}\nAddress: {address}"
+            else:
+                message = latlon
         else:
             message = latlon
         return message
@@ -32,14 +34,19 @@ class LocationTransformer:
     def _resolve_address(self, latitude: float, longitude: float) -> str:
         try:
             response = requests.get(
-                _GEOCODING_API,
+                GEOCODING_API,
                 {
                     "latlng": f"{latitude},{longitude}",
                     "key": self._google_api_key,
                 }
             )
             response.raise_for_status()
-            results = response.json().get('results')
+            data = response.json()
+            error_message = data.get('error_message')
+            if error_message:
+                logger.error(error_message)
+                return ""
+            results = data.get('results')
             if results:
                 return results[0]['formatted_address']
         except requests.RequestException:
