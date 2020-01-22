@@ -72,3 +72,5 @@ CHANGELOG.rst
 stash.db
 Session.vim
 .DS_Store
+/integration_tests/git_dir/
+/integration_tests/upstream/
