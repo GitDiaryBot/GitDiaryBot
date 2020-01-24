@@ -32,12 +32,13 @@ class TelegramReceiver:
 
     def _on_event(self, update: Update, context: CallbackContext) -> None:
         del context  # Only need information from update
-        self._handle_message(
+        self.handle_message(
             tenant=self._get_tenant(update.effective_user.id),
             message=update.message,
         )
+        update.message.reply_text("Saved")
 
-    def _handle_message(self, tenant: Tenant, message: Message) -> None:
+    def handle_message(self, tenant: Tenant, message: Message) -> None:
         if message.location:
             tenant.on_location(
                 message.location.latitude, message.location.longitude
@@ -46,7 +47,6 @@ class TelegramReceiver:
             tenant.on_text(message.text)
         if message.voice:
             self._on_voice(tenant, message.voice)
-        message.reply_text("Saved")
 
     @staticmethod
     def _on_voice(tenant: Tenant, voice: Voice) -> None:

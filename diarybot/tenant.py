@@ -42,7 +42,10 @@ class Tenant:
             raise ValueError(
                 f"Rejected User ID {user_id} - doesn't match configured {_SINGLE_USER_ID}"
             )
-        config = TenantConfig.load_from_env()
+        return cls.from_config(cls.load_env_config())
+
+    @classmethod
+    def from_config(cls, config: 'TenantConfig') -> 'Tenant':
         speech_to_text = (
             SpeechToTextClient(google_api_key=config.google_api_key)
             if config.google_api_key
@@ -55,6 +58,14 @@ class Tenant:
                 base_dir=config.base_dir,
                 speech_to_text=speech_to_text,
             ),
+        )
+
+    @classmethod
+    def load_env_config(cls) -> 'TenantConfig':
+        return TenantConfig(
+            base_dir=os.environ['DIARY_DIR'],
+            google_api_key=os.environ.get('DIARY_GOOGLE_API_KEY'),
+            diary_file_name=os.environ.get('DIARY_FILE', DEFAULT_DIARY_NAME),
         )
 
     @staticmethod
@@ -76,11 +87,3 @@ class TenantConfig:
     base_dir: str
     diary_file_name: str
     google_api_key: str = None
-
-    @classmethod
-    def load_from_env(cls) -> 'TenantConfig':
-        return cls(
-            base_dir=os.environ['DIARY_DIR'],
-            google_api_key=os.environ.get('DIARY_GOOGLE_API_KEY'),
-            diary_file_name=os.environ.get('DIARY_FILE', DEFAULT_DIARY_NAME),
-        )
