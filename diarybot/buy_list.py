@@ -17,7 +17,7 @@ class BuyList(TextHandler):
 
     def _match(self, text: str) -> str:
         parts = text.split(None, 1)
-        if not parts:
+        if not (parts and len(parts) == 2):
             return None
         head = parts[0].lower()
         tail = parts[1].strip()

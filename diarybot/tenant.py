@@ -20,6 +20,21 @@ class Tenant:
     location_transformer: LocationTransformer
     voice_transformer: VoiceTransformer
 
+    def on_text(self, text: str) -> None:
+        self.recorder.append_text(text)
+
+    def on_location(self, latitude: float, longitude: float) -> None:
+        message = self.location_transformer.handle_coordinates(
+            latitude, longitude
+        )
+        self.on_text(message)
+
+    def on_voice(self, file_id: str, data: bytes) -> None:
+        with self.voice_transformer.file_writer(file_id) as fobj:
+            fobj.write(data)
+        message = self.voice_transformer.handle_file_id(file_id)
+        self.on_text(message)
+
     @classmethod
     def load(cls, user_id: int) -> 'Tenant':
         """Create Tenant library for Telegram user id."""
