@@ -32,6 +32,8 @@ class TelegramReceiver:
 
     def _on_event(self, update: Update, context: CallbackContext) -> None:
         del context  # Only need information from update
+        if not update.message:
+            return
         self.handle_message(
             tenant=self._get_tenant(update.effective_user.id),
             message=update.message,
