@@ -38,6 +38,9 @@ class Tenant:
         message = self.voice_transformer.handle_file_id(file_id)
         self.on_text(message)
 
+    def install(self, repo_url: str) -> None:
+        pass
+
     @classmethod
     def load(cls, user_id: int) -> 'Tenant':
         """Create Tenant library for Telegram user id."""
@@ -74,6 +77,12 @@ class Tenant:
             ],
             after_write=[sync.on_after_write],
         )
+
+    @classmethod
+    def install_repo_url(cls, diary_dir: str, repo_url: str) -> None:
+        config = TenantConfig(base_dir=diary_dir, diary_file_name=DEFAULT_DIARY_NAME)
+        tenant = cls.from_config(config)
+        tenant.install(repo_url)
 
 
 @attr.s(slots=True, frozen=True, auto_attribs=True)

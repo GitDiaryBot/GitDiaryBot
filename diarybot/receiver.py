@@ -9,7 +9,7 @@ from telegram.ext import (
     CallbackContext,
 )
 
-from .tenant import Tenant
+from .tenant import Tenant, TenantNotFound
 
 _INSTALLATION_INSTRUCTIONS = """\
 Hi, I'm GitDiaryBot (https://gitdiarybot.github.io/).
@@ -20,6 +20,13 @@ using following command template:
 
 Note that you need to configure the repository to accept
 my SSH public key:
+
+"""
+
+_INSTALLATION_SUCCEEDED = """\
+Congrutalations, you I cloned your repository and ready to serve.
+Try me, send me a test message and see how it gets to your diary.
+"""
 
 
 class TelegramReceiver:
@@ -44,15 +51,16 @@ class TelegramReceiver:
         del context  # Only need information from update
         if not update.message:
             return
+        user_id = update.effective_user.id
         try:
             self.handle_message(
-                tenant=self._get_tenant(update.effective_user.id),
+                tenant=self._get_tenant(user_id),
                 message=update.message,
             )
         except TenantNotFound:
-            self._attempt_install(update.message)
+            self._attempt_install(user_id, update.message)
         else:
-        update.message.reply_text("Saved")
+            update.message.reply_text("Saved")
 
     def handle_message(self, tenant: Tenant, message: Message) -> None:
         if message.location:
@@ -64,16 +72,17 @@ class TelegramReceiver:
         if message.voice:
             self._on_voice(tenant, message.voice)
 
-    def _attempt_install(self, message: Message) -> None:
+    @staticmethod
+    def _attempt_install(user_id: int, message: Message) -> None:
         if not message.text:
             message.reply_text(_INSTALLATION_INSTRUCTIONS)
             return
-        if not message.text.startswith('/start')
+        if not message.text.startswith('/start'):
             message.reply_text(_INSTALLATION_INSTRUCTIONS)
         repo_url = message.text[7:]
         if not repo_url:
             message.reply_text(_INSTALLATION_INSTRUCTIONS)
-        Tenant.install_repo_url(repo_url)
+        Tenant.install_repo_url(diary_dir=str(user_id), repo_url=repo_url)
         message.reply_text(_INSTALLATION_SUCCEEDED)
 
     @staticmethod
