@@ -11,6 +11,16 @@ from telegram.ext import (
 
 from .tenant import Tenant
 
+_INSTALLATION_INSTRUCTIONS = """\
+Hi, I'm GitDiaryBot (https://gitdiarybot.github.io/).
+If you want to install it, send me a git repository URL
+using following command template:
+
+    /start git@github.com:peterdemin/diary.git
+
+Note that you need to configure the repository to accept
+my SSH public key:
+
 
 class TelegramReceiver:
 
@@ -34,10 +44,14 @@ class TelegramReceiver:
         del context  # Only need information from update
         if not update.message:
             return
-        self.handle_message(
-            tenant=self._get_tenant(update.effective_user.id),
-            message=update.message,
-        )
+        try:
+            self.handle_message(
+                tenant=self._get_tenant(update.effective_user.id),
+                message=update.message,
+            )
+        except TenantNotFound:
+            self._attempt_install(update.message)
+        else:
         update.message.reply_text("Saved")
 
     def handle_message(self, tenant: Tenant, message: Message) -> None:
@@ -49,6 +63,18 @@ class TelegramReceiver:
             tenant.on_text(message.text)
         if message.voice:
             self._on_voice(tenant, message.voice)
+
+    def _attempt_install(self, message: Message) -> None:
+        if not message.text:
+            message.reply_text(_INSTALLATION_INSTRUCTIONS)
+            return
+        if not message.text.startswith('/start')
+            message.reply_text(_INSTALLATION_INSTRUCTIONS)
+        repo_url = message.text[7:]
+        if not repo_url:
+            message.reply_text(_INSTALLATION_INSTRUCTIONS)
+        Tenant.install_repo_url(repo_url)
+        message.reply_text(_INSTALLATION_SUCCEEDED)
 
     @staticmethod
     def _on_voice(tenant: Tenant, voice: Voice) -> None:

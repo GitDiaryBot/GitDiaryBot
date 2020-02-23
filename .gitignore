@@ -74,3 +74,7 @@ Session.vim
 .DS_Store
 /integration_tests/git_dir/
 /integration_tests/upstream/
+integration_tests/messages/
+integration_tests/test_messages.py
+diary.md
+.pytype/

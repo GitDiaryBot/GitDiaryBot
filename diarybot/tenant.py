@@ -1,4 +1,6 @@
 import os
+import configparser
+
 import attr
 
 from .recorder import TextRecorder
@@ -10,7 +12,8 @@ from .transformers.location import LocationTransformer
 from .transformers.voice import VoiceTransformer
 
 
-_SINGLE_USER_ID = int(os.environ['SINGLE_USER_ID'])  # TODO: add multi-tenant mode
+_SINGLE_USER_ID = int(os.environ.get('SINGLE_USER_ID', '0'))
+_CONFIG_FILE_NAME = 'diary.ini'
 
 
 @attr.s(slots=True, frozen=True, auto_attribs=True)
@@ -38,11 +41,10 @@ class Tenant:
     @classmethod
     def load(cls, user_id: int) -> 'Tenant':
         """Create Tenant library for Telegram user id."""
-        if user_id != _SINGLE_USER_ID:
-            raise ValueError(
-                f"Rejected User ID {user_id} - doesn't match configured {_SINGLE_USER_ID}"
-            )
-        return cls.from_config(cls.load_env_config())
+        if user_id == _SINGLE_USER_ID:
+            return cls.from_config(TenantConfig.from_env())
+        config = TenantConfig.from_user_directory(str(user_id))
+        return cls.from_config(config)
 
     @classmethod
     def from_config(cls, config: 'TenantConfig') -> 'Tenant':
@@ -58,14 +60,6 @@ class Tenant:
                 base_dir=config.base_dir,
                 speech_to_text=speech_to_text,
             ),
-        )
-
-    @classmethod
-    def load_env_config(cls) -> 'TenantConfig':
-        return TenantConfig(
-            base_dir=os.environ['DIARY_DIR'],
-            google_api_key=os.environ.get('DIARY_GOOGLE_API_KEY'),
-            diary_file_name=os.environ.get('DIARY_FILE', DEFAULT_DIARY_NAME),
         )
 
     @staticmethod
@@ -87,3 +81,31 @@ class TenantConfig:
     base_dir: str
     diary_file_name: str
     google_api_key: str = None
+
+    @classmethod
+    def from_env(cls) -> 'TenantConfig':
+        return cls(
+            base_dir=os.environ['DIARY_DIR'],
+            google_api_key=os.environ.get('DIARY_GOOGLE_API_KEY'),
+            diary_file_name=os.environ.get('DIARY_FILE', DEFAULT_DIARY_NAME),
+        )
+
+    @classmethod
+    def from_user_directory(cls, directory_path: str) -> 'TenantConfig':
+        if not os.path.isdir(directory_path):
+            raise TenantNotFound(f"Tenant directory is missing at {directory_path}")
+        config_path = os.path.join(directory_path, _CONFIG_FILE_NAME)
+        if not os.path.exists(config_path):
+            raise TenantNotFound(f"Tenant directory {directory_path} is missing config file")
+        config = configparser.ConfigParser()
+        config.read(config_path)
+        section = config['diary']
+        return cls(
+            base_dir=directory_path,
+            google_api_key=section.get('diary_google_api_key', None),
+            diary_file_name=section.get('diary_file', DEFAULT_DIARY_NAME),
+        )
+
+
+class TenantNotFound(ValueError):
+    """Attempted to load tenant that doesn't have config file."""
