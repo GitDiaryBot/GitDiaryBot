@@ -2,6 +2,7 @@ import os
 import configparser
 
 import attr
+import git
 
 from .recorder import TextRecorder
 from .git_sync import GitSync
@@ -10,6 +11,7 @@ from .journal import PlainTextJournal, DEFAULT_DIARY_NAME
 from .speech_to_text import SpeechToTextClient
 from .transformers.location import LocationTransformer
 from .transformers.voice import VoiceTransformer
+from .events import TextReceived, LocationReceived, VoiceReceived, EventReceived
 
 
 _SINGLE_USER_ID = int(os.environ.get('SINGLE_USER_ID', '0'))
@@ -17,78 +19,9 @@ _CONFIG_FILE_NAME = 'diary.ini'
 
 
 @attr.s(slots=True, frozen=True, auto_attribs=True)
-class Tenant:
-    """Tenant-specific collection of objects."""
-    recorder: TextRecorder
-    location_transformer: LocationTransformer
-    voice_transformer: VoiceTransformer
-
-    def on_text(self, text: str) -> None:
-        self.recorder.append_text(text)
-
-    def on_location(self, latitude: float, longitude: float) -> None:
-        message = self.location_transformer.handle_coordinates(
-            latitude, longitude
-        )
-        self.on_text(message)
-
-    def on_voice(self, file_id: str, data: bytes) -> None:
-        with self.voice_transformer.file_writer(file_id) as fobj:
-            fobj.write(data)
-        message = self.voice_transformer.handle_file_id(file_id)
-        self.on_text(message)
-
-    def install(self, repo_url: str) -> None:
-        pass
-
-    @classmethod
-    def load(cls, user_id: int) -> 'Tenant':
-        """Create Tenant library for Telegram user id."""
-        if user_id == _SINGLE_USER_ID:
-            return cls.from_config(TenantConfig.from_env())
-        config = TenantConfig.from_user_directory(str(user_id))
-        return cls.from_config(config)
-
-    @classmethod
-    def from_config(cls, config: 'TenantConfig') -> 'Tenant':
-        speech_to_text = (
-            SpeechToTextClient(google_api_key=config.google_api_key)
-            if config.google_api_key
-            else None
-        )
-        return cls(
-            recorder=cls._load_text_recorder(config),
-            location_transformer=LocationTransformer(config.google_api_key),
-            voice_transformer=VoiceTransformer(
-                base_dir=config.base_dir,
-                speech_to_text=speech_to_text,
-            ),
-        )
-
-    @staticmethod
-    def _load_text_recorder(config: 'TenantConfig') -> TextRecorder:
-        sync = GitSync(git_dir=config.base_dir)
-        journal_path = os.path.join(config.base_dir, config.diary_file_name)
-        return TextRecorder(
-            before_write=[sync.on_before_write],
-            on_write=[
-                PlainTextJournal(file_path=journal_path),
-                BuyList(os.path.join(config.base_dir, 'buy_list.md')),
-            ],
-            after_write=[sync.on_after_write],
-        )
-
-    @classmethod
-    def install_repo_url(cls, diary_dir: str, repo_url: str) -> None:
-        config = TenantConfig(base_dir=diary_dir, diary_file_name=DEFAULT_DIARY_NAME)
-        tenant = cls.from_config(config)
-        tenant.install(repo_url)
-
-
-@attr.s(slots=True, frozen=True, auto_attribs=True)
 class TenantConfig:
     base_dir: str
-    diary_file_name: str
+    diary_file_name: str = DEFAULT_DIARY_NAME
     google_api_key: str = None
 
     @classmethod
@@ -114,6 +47,81 @@ class TenantConfig:
             google_api_key=section.get('diary_google_api_key', None),
             diary_file_name=section.get('diary_file', DEFAULT_DIARY_NAME),
         )
+
+
+@attr.s(slots=True, frozen=True, auto_attribs=True)
+class Tenant:
+    """Tenant-specific collection of objects."""
+    recorder: TextRecorder
+    location_transformer: LocationTransformer
+    voice_transformer: VoiceTransformer
+    config: TenantConfig
+
+    def handle_event(self, event: EventReceived) -> None:
+        self._HANDLERS[type(event)](event)
+
+    def _on_text(self, event: TextReceived) -> None:
+        self.recorder.append_text(event.text)
+
+    def _on_location(self, event: LocationReceived) -> None:
+        message = self.location_transformer.handle_coordinates(
+            event.latitude, event.longitude
+        )
+        self.handle_event(TextReceived(text=message))
+
+    def _on_voice(self, event: VoiceReceived) -> None:
+        with self.voice_transformer.file_writer(event.file_id) as fobj:
+            fobj.write(event.data)
+        message = self.voice_transformer.handle_file_id(event.file_id)
+        self.handle_event(TextReceived(text=message))
+
+    @classmethod
+    def load(cls, user_id: int) -> 'Tenant':
+        """Create Tenant library for Telegram user id."""
+        if user_id == _SINGLE_USER_ID:
+            return cls.from_config(TenantConfig.from_env())
+        config = TenantConfig.from_user_directory(str(user_id))
+        return cls.from_config(config)
+
+    @classmethod
+    def from_config(cls, config: TenantConfig) -> 'Tenant':
+        speech_to_text = (
+            SpeechToTextClient(google_api_key=config.google_api_key)
+            if config.google_api_key
+            else None
+        )
+        return cls(
+            recorder=cls._load_text_recorder(config),
+            location_transformer=LocationTransformer(config.google_api_key),
+            voice_transformer=VoiceTransformer(
+                base_dir=config.base_dir,
+                speech_to_text=speech_to_text,
+            ),
+            config=config,
+        )
+
+    @staticmethod
+    def _load_text_recorder(config: TenantConfig) -> TextRecorder:
+        sync = GitSync(git_dir=config.base_dir)
+        journal_path = os.path.join(config.base_dir, config.diary_file_name)
+        return TextRecorder(
+            before_write=[sync.on_before_write],
+            on_write=[
+                PlainTextJournal(file_path=journal_path),
+                BuyList(os.path.join(config.base_dir, 'buy_list.md')),
+            ],
+            after_write=[sync.on_after_write],
+        )
+
+    @classmethod
+    def install_repo_url(cls, diary_dir: str, repo_url: str) -> None:
+        git.Repo.clone_from(repo_url, diary_dir)
+
+    _HANDLERS = {
+        TextReceived: _on_text,
+        VoiceReceived: _on_voice,
+        LocationReceived: _on_location,
+    }
 
 
 class TenantNotFound(ValueError):
