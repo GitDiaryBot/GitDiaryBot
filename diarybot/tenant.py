@@ -60,7 +60,8 @@ class Tenant:
     config: TenantConfig
 
     def handle_event(self, event: EventReceived) -> None:
-        self._HANDLERS[type(event)](event)
+        handler = self._HANDLERS[type(event)]
+        handler(self, event)
 
     def _on_text(self, event: TextReceived) -> None:
         self.recorder.append_text(event.text)

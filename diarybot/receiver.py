@@ -11,6 +11,7 @@ from telegram.ext import (
 
 from .tenant import Tenant, TenantNotFound
 from .events import TextReceived, LocationReceived, VoiceReceived, EventReceived, PhotoReceived
+from .handlers.loader import load_specs, EventSpec
 
 _INSTALLATION_INSTRUCTIONS = """\
 Hi, I'm GitDiaryBot (https://gitdiarybot.github.io/).
@@ -31,18 +32,23 @@ Try me, send me a test message and see how it gets to your diary.
 
 
 class TelegramReceiver:
-
-    FILTERS = (
-        Filters.text,
+    _LEGACY_FILTERS = [
         Filters.location,
         Filters.voice,
-    )
+        Filters.photo,
+    ]
 
     def __init__(self):
         self._tenants: Dict[int, Tenant] = {}
+        self._event_specs: List[EventSpec] = load_specs()
+        spec_filters = [
+            event_spec.event_filter
+            for event_spec in self._event_specs
+        ]
+        self._filters = tuple(spec_filters + self._LEGACY_FILTERS)
 
     def attach(self, bot: Updater) -> None:
-        for filters in self.FILTERS:
+        for filters in self._filters:
             bot.dispatcher.add_handler(MessageHandler(
                 filters=filters,
                 callback=self._on_event,
@@ -64,12 +70,13 @@ class TelegramReceiver:
 
     @classmethod
     def _extract_events(cls, message: Message) -> Iterable[EventReceived]:
+        for event_spec in self._event_specs:
+            for event in event_spec.extractor(message):
+                event_spec.handler(tenant).handle_event(event)
         if message.location:
             yield LocationReceived(
                 message.location.latitude, message.location.longitude
             )
-        if message.text:
-            yield TextReceived(message.text)
         if message.voice:
             fobj = BytesIO()
             tg_file = message.voice.get_file()
