@@ -1,7 +1,7 @@
 from io import BytesIO
-from typing import Dict, Iterable
+from typing import Dict, Iterable, List
 
-from telegram import Update, Message
+from telegram import Update, Message, PhotoSize
 from telegram.ext import (
     MessageHandler,
     Updater,
@@ -10,7 +10,7 @@ from telegram.ext import (
 )
 
 from .tenant import Tenant, TenantNotFound
-from .events import TextReceived, LocationReceived, VoiceReceived, EventReceived
+from .events import TextReceived, LocationReceived, VoiceReceived, EventReceived, PhotoReceived
 
 _INSTALLATION_INSTRUCTIONS = """\
 Hi, I'm GitDiaryBot (https://gitdiarybot.github.io/).
@@ -62,8 +62,8 @@ class TelegramReceiver:
                 tenant.handle_event(event)
             update.message.reply_text("Saved")
 
-    @staticmethod
-    def _extract_events(message: Message) -> Iterable[EventReceived]:
+    @classmethod
+    def _extract_events(cls, message: Message) -> Iterable[EventReceived]:
         if message.location:
             yield LocationReceived(
                 message.location.latitude, message.location.longitude
@@ -75,6 +75,19 @@ class TelegramReceiver:
             tg_file = message.voice.get_file()
             tg_file.download(out=fobj)
             yield VoiceReceived(tg_file.file_id, fobj.getvalue())
+        if message.photo:
+            photo = cls._largest_photo(message.photo)
+            tg_file = photo.get_file()
+            fobj = BytesIO()
+            tg_file.download(out=fobj)
+            yield PhotoReceived(tg_file.file_id, fobj.getvalue())
+
+    @staticmethod
+    def _largest_photo(photo_sizes: List[PhotoSize]) -> PhotoSize:
+        return max([
+            (size.width * size.height, size)
+            for size in photo_sizes
+        ])[1]
 
     @staticmethod
     def _attempt_install(user_id: int, message: Message) -> None:

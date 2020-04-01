@@ -20,4 +20,10 @@ class VoiceReceived:
     data: bytes
 
 
+@attr.s(slots=True, frozen=True, auto_attribs=True)
+class PhotoReceived:
+    file_id: str
+    data: bytes
+
+
 EventReceived = Union[TextReceived, LocationReceived, VoiceReceived]

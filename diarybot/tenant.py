@@ -11,7 +11,8 @@ from .journal import PlainTextJournal, DEFAULT_DIARY_NAME
 from .speech_to_text import SpeechToTextClient
 from .transformers.location import LocationTransformer
 from .transformers.voice import VoiceTransformer
-from .events import TextReceived, LocationReceived, VoiceReceived, EventReceived
+from .transformers.photo import PhotoTransformer
+from .events import TextReceived, LocationReceived, VoiceReceived, EventReceived, PhotoReceived
 
 
 _SINGLE_USER_ID = int(os.environ.get('SINGLE_USER_ID', '0'))
@@ -55,6 +56,7 @@ class Tenant:
     recorder: TextRecorder
     location_transformer: LocationTransformer
     voice_transformer: VoiceTransformer
+    photo_transformer: PhotoTransformer
     config: TenantConfig
 
     def handle_event(self, event: EventReceived) -> None:
@@ -73,6 +75,12 @@ class Tenant:
         with self.voice_transformer.file_writer(event.file_id) as fobj:
             fobj.write(event.data)
         message = self.voice_transformer.handle_file_id(event.file_id)
+        self.handle_event(TextReceived(text=message))
+
+    def _on_photo(self, event: PhotoReceived) -> None:
+        with self.photo_transformer.file_writer(event.file_id) as fobj:
+            fobj.write(event.data)
+        message = self.photo_transformer.handle_file_id(event.file_id)
         self.handle_event(TextReceived(text=message))
 
     @classmethod
@@ -96,6 +104,9 @@ class Tenant:
             voice_transformer=VoiceTransformer(
                 base_dir=config.base_dir,
                 speech_to_text=speech_to_text,
+            ),
+            photo_transformer=PhotoTransformer(
+                base_dir=config.base_dir,
             ),
             config=config,
         )
@@ -121,6 +132,7 @@ class Tenant:
         TextReceived: _on_text,
         VoiceReceived: _on_voice,
         LocationReceived: _on_location,
+        PhotoReceived: _on_photo,
     }
 
 
