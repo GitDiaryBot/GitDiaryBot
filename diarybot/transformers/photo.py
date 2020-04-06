@@ -8,7 +8,7 @@ _PHOTO_DIR = 'photo'
 
 class PhotoTransformer:
 
-    _FILE_NAME_PTRN = '{}'
+    _FILE_NAME_PTRN = '{}.jpeg'
 
     def __init__(self,
                  base_dir: str,
