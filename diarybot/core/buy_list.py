@@ -1,3 +1,5 @@
+from typing import Optional
+
 from .text_handler import TextHandler
 
 
@@ -15,7 +17,7 @@ class BuyList(TextHandler):
         if item:
             self._append_item(item)
 
-    def _match(self, text: str) -> str:
+    def _match(self, text: str) -> Optional[str]:
         parts = text.split(None, 1)
         if not (parts and len(parts) == 2):
             return None

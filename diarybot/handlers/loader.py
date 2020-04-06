@@ -32,7 +32,7 @@ class HandlerLoader:
         }
 
     def _load_text_event_handler(self) -> TextEventHandler:
-        TextEventHandler(recorder=self._recorder)
+        return TextEventHandler(recorder=self._recorder)
 
     def _load_location_event_handler(self) -> LocationEventHandler:
         location_transformer = (

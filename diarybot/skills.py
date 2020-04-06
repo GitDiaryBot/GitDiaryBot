@@ -1,3 +1,5 @@
+from typing import Type
+
 import attr
 from telegram.ext import BaseFilter, Filters
 
@@ -12,8 +14,8 @@ from diarybot.extractors.photo import PhotoEventExtractor
 @attr.s(slots=True, frozen=True, auto_attribs=True)
 class Skill:
     tg_filter: BaseFilter
-    extractor: EventExtractorInterface
-    event_class: DiaryEvent
+    extractor: Type[EventExtractorInterface]
+    event_class: Type[DiaryEvent]
 
 
 SKILLS = [

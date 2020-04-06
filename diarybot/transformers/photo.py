@@ -1,7 +1,6 @@
 import os
-import io
 from contextlib import contextmanager
-from typing import Iterable
+from typing import Iterator, BinaryIO
 
 
 _PHOTO_DIR = 'photo'
@@ -19,7 +18,7 @@ class PhotoTransformer:
         self._target_dir = os.path.join(base_dir, rel_dir)
 
     @contextmanager
-    def file_writer(self, file_id: str) -> Iterable[io.BufferedWriter]:
+    def file_writer(self, file_id: str) -> Iterator[BinaryIO]:
         if not os.path.exists(self._target_dir):
             os.makedirs(self._target_dir)
         abs_path = os.path.join(self._target_dir, self._FILE_NAME_PTRN.format(file_id))
