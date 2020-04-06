@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from diarybot.recorder import TextRecorder
+from diarybot.core.recorder import TextRecorder
 
 
 class GetRecorderTestCase(TestCase):

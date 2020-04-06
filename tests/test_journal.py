@@ -4,10 +4,10 @@ from unittest import mock
 
 import pytz
 
-from diarybot.journal import PlainTextJournal, naive_format
+from diarybot.core.journal import PlainTextJournal, naive_format
 
 
-@mock.patch('diarybot.journal.open', create=True)
+@mock.patch('diarybot.core.journal.open', create=True)
 def test_append_sample_text(mock_open):
     journal = PlainTextJournal(file_path='file_path', text_formatter=fake_format)
     mock_open.return_value = mock.MagicMock(spec=io.IOBase)

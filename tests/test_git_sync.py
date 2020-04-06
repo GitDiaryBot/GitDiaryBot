@@ -3,7 +3,7 @@ from unittest import TestCase, mock
 from git.remote import Remote
 from git.index import IndexFile
 
-from diarybot.git_sync import GitSync
+from diarybot.core.git_sync import GitSync
 
 
 class GitSyncTestCase(TestCase):

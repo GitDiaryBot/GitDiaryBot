@@ -3,7 +3,7 @@ import io
 from contextlib import contextmanager
 from typing import Iterable, Optional
 
-from diarybot.speech_to_text import SpeechToTextClient
+from diarybot.core.speech_to_text import SpeechToTextClient
 
 
 _TRANSCRIPT_LANGUAGE_CODES = ("ru-RU", "en-US")

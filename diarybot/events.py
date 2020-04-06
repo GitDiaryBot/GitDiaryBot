@@ -4,24 +4,25 @@ import attr
 
 
 @attr.s(slots=True, frozen=True, auto_attribs=True)
-class TextReceived:
+class DiaryEvent:
+    pass
+
+
+class TextReceived(DiaryEvent):
     text: str
 
 
-@attr.s(slots=True, frozen=True, auto_attribs=True)
-class LocationReceived:
+class LocationReceived(DiaryEvent):
     latitude: float
     longitude: float
 
 
-@attr.s(slots=True, frozen=True, auto_attribs=True)
-class VoiceReceived:
+class VoiceReceived(DiaryEvent):
     file_id: str
     data: bytes
 
 
-@attr.s(slots=True, frozen=True, auto_attribs=True)
-class PhotoReceived:
+class PhotoReceived(DiaryEvent):
     file_id: str
     data: bytes
 
