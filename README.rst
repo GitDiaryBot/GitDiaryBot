@@ -4,6 +4,8 @@ GitDiaryBot
 Telegram bot, that writes incoming messages to a text file and synchronizes using Git repository.
 In addition to plain text input it also understands locations, voice recordings and photos.
 
+The bot is meant to be self-hosted.
+`Demo bot <https://t.me/GitDiaryBot>`_ is running in multi-user mode and can be used for trial.
 
 OOP Architecture
 ----------------
