@@ -9,7 +9,7 @@ from .events import DiaryEvent
 
 class Tenant(TenantInterface):
     """Tenant-specific collection of objects."""
-    def __init__(self, handlers: Dict[Type, EventHandler]) -> None:
+    def __init__(self, handlers: Dict[Type[DiaryEvent], EventHandler]) -> None:
         self._handlers = handlers
 
     def handle_event(self, event: DiaryEvent) -> None:

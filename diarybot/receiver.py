@@ -10,6 +10,11 @@ from diarybot.skill_interface import Skill
 
 
 class TenantLib:
+    """Creates and holds tenants registry.
+
+    Tenants are identified by chat user ID.
+    Each tenant has a set of handlers parameterized with tenant config.
+    """
 
     def __init__(self, tenant_config_loader: TenantConfigLoader, skills: List[Skill]) -> None:
         self._tenant_config_loader = tenant_config_loader
@@ -32,6 +37,7 @@ def load_tenant_lib(single_user_id: int, skills: List[Skill]) -> TenantLib:
 
 
 class MessageReceiver:
+    """Extracts internal events from incoming messages and sends them to a tenant."""
 
     def __init__(self,
                  tenant_lib: TenantLib,

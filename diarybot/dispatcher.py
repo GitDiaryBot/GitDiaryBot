@@ -31,6 +31,8 @@ Try me, send me a test message and see how it gets to your diary.
 
 
 class TelegramDispatcher:
+    """Dispatches incoming messages to message receiver or installer."""
+
     def __init__(self, message_receiver: MessageReceiver, skills: List[Skill]):
         self._message_receiver = message_receiver
         self._filters = list({skill.tg_filter for skill in skills})
