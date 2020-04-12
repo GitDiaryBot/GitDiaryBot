@@ -3,10 +3,8 @@ from diarybot.core.recorder import TextRecorder
 from diarybot.transformers.location import LocationTransformer
 from diarybot.tenant_config import TenantConfig
 from .interface import RecordingEventHandler
-from .registry import register_handler
 
 
-@register_handler(LocationReceived)
 class LocationEventHandler(RecordingEventHandler):
     def __init__(self, recorder: TextRecorder, location_transformer: LocationTransformer) -> None:
         self._recorder = recorder
