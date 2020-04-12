@@ -1,31 +1,33 @@
-from typing import Dict
+from typing import Dict, List
 
 from telegram import Message
 
 from diarybot.tenant_config import TenantConfigLoader
-from diarybot.handlers.loader import HandlerLoader, load_recorder
+from diarybot.handlers.loader import HandlerLoader
 from diarybot.tenant import Tenant
 from diarybot.extractors.interface import EventExtractorInterface
+from diarybot.skill_interface import Skill
 
 
 class TenantLib:
 
-    def __init__(self, tenant_config_loader: TenantConfigLoader) -> None:
+    def __init__(self, tenant_config_loader: TenantConfigLoader, skills: List[Skill]) -> None:
         self._tenant_config_loader = tenant_config_loader
         self._tenants: Dict[int, Tenant] = {}
+        self._skills = skills
 
     def load_tenant(self, tenant_id: int) -> Tenant:
         if tenant_id not in self._tenants:
             tenant_config = self._tenant_config_loader.load(tenant_id)
-            recorder = load_recorder(tenant_config)
-            loader = HandlerLoader(tenant_config=tenant_config, recorder=recorder)
+            loader = HandlerLoader(tenant_config=tenant_config, skills=self._skills)
             self._tenants[tenant_id] = Tenant(handlers=loader.load())
         return self._tenants[tenant_id]
 
 
-def load_tenant_lib(single_user_id: int) -> TenantLib:
+def load_tenant_lib(single_user_id: int, skills: List[Skill]) -> TenantLib:
     return TenantLib(
         tenant_config_loader=TenantConfigLoader(single_user_id=single_user_id),
+        skills=skills,
     )
 
 

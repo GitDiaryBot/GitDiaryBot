@@ -2,7 +2,7 @@ from typing import Iterator, List
 from telegram import Message
 
 from diarybot.events import EventReceived
-from diarybot.skills import Skill
+from diarybot.skill_interface import Skill
 from diarybot.extractors.interface import EventExtractorInterface
 
 

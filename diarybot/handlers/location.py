@@ -1,10 +1,13 @@
 from diarybot.events import LocationReceived
 from diarybot.core.recorder import TextRecorder
 from diarybot.transformers.location import LocationTransformer
-from .interface import EventHandler
+from diarybot.tenant_config import TenantConfig
+from .interface import RecordingEventHandler
+from .registry import register_handler
 
 
-class LocationEventHandler(EventHandler):
+@register_handler(LocationReceived)
+class LocationEventHandler(RecordingEventHandler):
     def __init__(self, recorder: TextRecorder, location_transformer: LocationTransformer) -> None:
         self._recorder = recorder
         self._location_transformer = location_transformer
@@ -14,3 +17,15 @@ class LocationEventHandler(EventHandler):
             event.latitude, event.longitude
         )
         self._recorder.append_text(text=text)
+
+    @classmethod
+    def load(cls, tenant_config: TenantConfig, recorder: TextRecorder) -> 'LocationEventHandler':
+        location_transformer = (
+            LocationTransformer(tenant_config.google_api_key)
+            if tenant_config.google_api_key
+            else None
+        )
+        return cls(
+            recorder=recorder,
+            location_transformer=location_transformer,
+        )

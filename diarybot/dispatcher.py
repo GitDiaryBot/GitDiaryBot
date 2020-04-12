@@ -10,7 +10,7 @@ from telegram.ext import (
 from diarybot.receiver import MessageReceiver
 from diarybot.tenant_config import TenantNotFound
 from diarybot.tenant import Tenant
-from diarybot.skills import Skill
+from diarybot.skill_interface import Skill
 
 _INSTALLATION_INSTRUCTIONS = """\
 Hi, I'm GitDiaryBot (https://gitdiarybot.github.io/).

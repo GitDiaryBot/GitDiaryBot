@@ -17,7 +17,7 @@ DIARY_TOKEN = os.environ['DIARY_TOKEN']
 def run_forever():
     bot = Updater(DIARY_TOKEN, use_context=True)
     receiver = MessageReceiver(
-        tenant_lib=load_tenant_lib(single_user_id=SINGLE_USER_ID),
+        tenant_lib=load_tenant_lib(single_user_id=SINGLE_USER_ID, skills=SKILLS),
         event_extractor=EventExtractor(skills=SKILLS),
     )
     dispatcher = TelegramDispatcher(message_receiver=receiver, skills=SKILLS)
