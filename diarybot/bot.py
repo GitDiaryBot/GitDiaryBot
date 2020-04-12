@@ -11,10 +11,12 @@ from diarybot.skills import SKILLS
 
 
 SINGLE_USER_ID = int(os.environ.get('SINGLE_USER_ID', '0'))
-DIARY_TOKEN = os.environ['DIARY_TOKEN']
+DIARY_TOKEN = os.environ.get('DIARY_TOKEN')
 
 
 def run_forever():
+    if not DIARY_TOKEN:
+        raise RuntimeError("Environment variable DIARY_TOKEN is not set.")
     bot = Updater(DIARY_TOKEN, use_context=True)
     receiver = MessageReceiver(
         tenant_lib=load_tenant_lib(single_user_id=SINGLE_USER_ID, skills=SKILLS),

@@ -17,7 +17,7 @@ class VoiceTransformer(BaseMediaTransformer):
                  speech_to_text: Optional[SpeechToTextClient],
                  base_dir: str,
                  rel_dir: str = _AUDIO_DIR) -> None:
-        super().__init__(self, base_dir, rel_dir)
+        super().__init__(base_dir, rel_dir)
         self._speech_to_text = speech_to_text
 
     def handle_file_id(self, file_id: str) -> str:

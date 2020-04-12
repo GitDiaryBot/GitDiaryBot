@@ -11,7 +11,7 @@ class PhotoTransformer(BaseMediaTransformer):
     def __init__(self,
                  base_dir: str,
                  rel_dir: str = _PHOTO_DIR) -> None:
-        super().__init__(self, base_dir, rel_dir)
+        super().__init__(base_dir, rel_dir)
 
     def handle_file_id(self, file_id: str) -> str:
         return "Photo: {}".format(self._rel_path(file_id))
