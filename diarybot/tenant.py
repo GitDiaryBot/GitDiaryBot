@@ -4,7 +4,7 @@ import git
 
 from diarybot.interface import TenantInterface
 from diarybot.handlers.interface import EventHandler
-from .events import EventReceived
+from .events import DiaryEvent
 
 
 class Tenant(TenantInterface):
@@ -12,7 +12,7 @@ class Tenant(TenantInterface):
     def __init__(self, handlers: Dict[Type, EventHandler]) -> None:
         self._handlers = handlers
 
-    def handle_event(self, event: EventReceived) -> None:
+    def handle_event(self, event: DiaryEvent) -> None:
         handler = self._handlers[type(event)]
         handler.handle_event(event)
 

@@ -33,6 +33,3 @@ class VoiceReceived(DiaryEvent):
 class PhotoReceived(DiaryEvent):
     file_id: str
     data: bytes
-
-
-EventReceived = Union[TextReceived, LocationReceived, VoiceReceived]

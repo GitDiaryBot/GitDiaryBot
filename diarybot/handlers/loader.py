@@ -1,11 +1,11 @@
 import os
-from typing import Dict, Type, List
+from typing import Dict, Type, List, cast
 
 from diarybot.core.git_sync import GitSync
 from diarybot.core.journal import PlainTextJournal
 from diarybot.core.buy_list import BuyList
 from diarybot.core.recorder import TextRecorder
-from diarybot.handlers.interface import EventHandler
+from diarybot.handlers.interface import EventHandler, RecordingEventHandler
 from diarybot.tenant_config import TenantConfig
 from diarybot.skill_interface import Skill
 
@@ -17,13 +17,14 @@ class HandlerLoader:
 
     def load(self) -> Dict[Type, EventHandler]:
         recorder = self._load_recorder(self._tenant_config)
-        return {
-            skill.event_class: skill.event_handler_class.load(
+        handlers = {}
+        for skill in self._skills:
+            handler_class = cast(RecordingEventHandler, skill.event_handler_class)
+            handlers[skill.event_class] = handler_class.load(
                 tenant_config=self._tenant_config,
-                recorder=recorder
+                recorder=recorder,
             )
-            for skill in self._skills
-        }
+        return handlers
 
     @staticmethod
     def _load_recorder(config: TenantConfig) -> TextRecorder:
