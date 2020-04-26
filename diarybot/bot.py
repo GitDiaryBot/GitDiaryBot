@@ -8,6 +8,8 @@ from diarybot.dispatcher import TelegramDispatcher
 from diarybot.extractors.extractor import EventExtractor
 from diarybot.receiver import MessageReceiver, load_tenant_lib
 from diarybot.skills import SKILLS
+from diarybot.installer import TenantInstaller
+from diarybot.guest import GuestReceiver
 
 
 SINGLE_USER_ID = int(os.environ.get('SINGLE_USER_ID', '0'))
@@ -22,7 +24,11 @@ def run_forever():
         tenant_lib=load_tenant_lib(single_user_id=SINGLE_USER_ID, skills=SKILLS),
         event_extractor=EventExtractor(skills=SKILLS),
     )
-    dispatcher = TelegramDispatcher(message_receiver=receiver, skills=SKILLS)
+    dispatcher = TelegramDispatcher(
+        message_receiver=receiver,
+        guest_receiver=GuestReceiver(TenantInstaller()),
+        skills=SKILLS,
+    )
     dispatcher.attach(bot)
     bot.start_polling()
     bot.idle()

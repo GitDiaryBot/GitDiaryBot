@@ -1,6 +1,6 @@
 from typing import List
 
-from telegram import Update, Message
+from telegram import Update
 from telegram.ext import (
     MessageHandler,
     Updater,
@@ -8,33 +8,20 @@ from telegram.ext import (
 )
 
 from diarybot.receiver import MessageReceiver
-from diarybot.tenant_config import TenantNotFound
-from diarybot.tenant import Tenant
+from diarybot.tenant_config import TenantNotFound, NotSingleUser
 from diarybot.skill_interface import Skill
-
-_INSTALLATION_INSTRUCTIONS = """\
-Hi, I'm GitDiaryBot (https://gitdiarybot.github.io/).
-If you want to install it, send me a git repository URL
-using following command template:
-
-    /start git@github.com:peterdemin/diary.git
-
-Note that you need to configure the repository to accept
-my SSH public key:
-
-"""
-
-_INSTALLATION_SUCCEEDED = """\
-Congrutalations, you I cloned your repository and ready to serve.
-Try me, send me a test message and see how it gets to your diary.
-"""
+from diarybot.guest import GuestReceiver
 
 
 class TelegramDispatcher:
     """Dispatches incoming messages to message receiver or installer."""
 
-    def __init__(self, message_receiver: MessageReceiver, skills: List[Skill]):
+    def __init__(self,
+                 message_receiver: MessageReceiver,
+                 guest_receiver: GuestReceiver,
+                 skills: List[Skill]):
         self._message_receiver = message_receiver
+        self._guest_receiver = guest_receiver
         self._filters = list({skill.tg_filter for skill in skills})
 
     def attach(self, bot: Updater) -> None:
@@ -52,17 +39,8 @@ class TelegramDispatcher:
         try:
             self._message_receiver.receive_message(user_id, update.message)
         except TenantNotFound:
-            self._attempt_install(user_id, update.message)
-
-    @staticmethod
-    def _attempt_install(user_id: int, message: Message) -> None:
-        if not message.text:
-            message.reply_text(_INSTALLATION_INSTRUCTIONS)
-            return
-        if not message.text.startswith('/start'):
-            message.reply_text(_INSTALLATION_INSTRUCTIONS)
-        repo_url = message.text[7:]
-        if not repo_url:
-            message.reply_text(_INSTALLATION_INSTRUCTIONS)
-        Tenant.install_repo_url(diary_dir=str(user_id), repo_url=repo_url)
-        message.reply_text(_INSTALLATION_SUCCEEDED)
+            self._guest_receiver.handle_message(user_id, update.message)
+        except NotSingleUser:
+            update.message.reply_text(
+                f"I'm running in single user mode and your user ID ({user_id}) doesn't match it."
+            )

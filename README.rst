@@ -10,8 +10,8 @@ The bot is meant to be self-hosted.
 Decisions and Trade-offs
 ------------------------
 
-Problems
-~~~~~~~~
+Problem
+~~~~~~~
 
 I want to keep a private journal/diary. I post there what's important for me at the moment.
 Sometimes I reorganize the content, edit old records. I don't want to share any part of it.
