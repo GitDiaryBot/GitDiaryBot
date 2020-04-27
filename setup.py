@@ -21,6 +21,7 @@ def changelog_version():
                 version = line.split()[1].strip('[]')
                 if set(version).issubset('0123456789.'):
                     return version
+    return '0.0.0'
 
 
 def read_requirements():
@@ -61,7 +62,7 @@ setup(
     zip_safe=False,
     keywords='git diary bot',
     classifiers=[
-        'Development Status :: 1 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
