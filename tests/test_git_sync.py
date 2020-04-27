@@ -4,16 +4,14 @@ from git.remote import Remote
 from git.index import IndexFile
 
 from diarybot.core.git_sync import GitSync
+from diarybot.dgit import Git
 
 
 class GitSyncTestCase(TestCase):
 
     def setUp(self):
         self._fake_repo = FakeRepo()
-        self._git_sync = GitSync(git_dir='git_dir', repo_class=self._fake_repo)
-
-    def test_sets_git_dir(self):
-        assert self._fake_repo.git_dir == 'git_dir'
+        self._git_sync = GitSync(Git(repo=self._fake_repo, private_key_path=''))
 
     def test_pulls_before_write(self):
         self._git_sync.on_before_write()

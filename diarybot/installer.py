@@ -1,4 +1,4 @@
-from diarybot.dgit import Git, GitError
+from diarybot.dgit import GitOps, Git, GitError
 
 
 _INSTALLATION_INSTRUCTIONS = """\
@@ -37,6 +37,9 @@ Once it's done, no additional setup required, you can start journaling.
 class TenantInstaller:
     _TRIGGER = '/start'
 
+    def __init__(self, gitops: GitOps):
+        self._gitops = gitops
+
     def respond(self, user_id: int, message: str = None) -> str:
         """Generate response text for unknown user.
 
@@ -49,7 +52,7 @@ class TenantInstaller:
             return _INSTALLATION_INSTRUCTIONS + _FOLLOW_INSTRUCTIONS
         repo_url = message[len(self._TRIGGER) + 1:].strip()
         try:
-            repo = Git.clone(url=repo_url, to_path=str(user_id))
+            repo: Git = self._gitops.clone(url=repo_url, to_path=str(user_id))
         except GitError as exc:
             return "{}\n{}\n{}".format(_CLONE_FAILED, exc.stderr, _FOLLOW_INSTRUCTIONS)
         try:
