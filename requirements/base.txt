@@ -5,7 +5,7 @@
 #
 #    pip-compile-multi
 #
-attrs==19.3.0
+attrs==19.3.0             # via -r base.in
 certifi==2020.4.5.1       # via python-telegram-bot, requests
 cffi==1.14.0              # via cryptography
 chardet==3.0.4            # via requests
@@ -13,14 +13,14 @@ cryptography==2.9         # via python-telegram-bot
 decorator==4.4.2          # via python-telegram-bot
 future==0.18.2            # via python-telegram-bot
 gitdb==4.0.4              # via gitpython
-gitpython==3.1.1
+gitpython==3.1.1          # via -r base.in
 idna==2.9                 # via requests
 pycparser==2.20           # via cffi
-python-telegram-bot==12.6.1
+python-telegram-bot==12.6.1  # via -r base.in
 pytz==2019.3              # via tzlocal
-requests==2.23.0
+requests==2.23.0          # via -r base.in
 six==1.14.0               # via cryptography
 smmap==3.0.2              # via gitdb
 tornado==6.0.4            # via python-telegram-bot
-tzlocal==2.0.0
+tzlocal==2.0.0            # via -r base.in
 urllib3==1.25.8           # via requests
