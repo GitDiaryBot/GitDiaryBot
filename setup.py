@@ -70,6 +70,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     test_suite='tests',
+    python_requires='>=3.6',
     setup_requires=['pytest-runner'],
     tests_require=[
         'pytest',
