@@ -5,18 +5,78 @@
 #
 #    pip-compile-multi
 #
--r base.txt
-coverage==5.0.4           # via pytest-cov
-freezegun==0.3.15         # via -r test.in
-importlib-metadata==1.6.0  # via pluggy, pytest
-more-itertools==8.2.0     # via pytest
-packaging==20.3           # via pytest
-pluggy==0.13.1            # via pytest
-py==1.8.1                 # via pytest
-pyparsing==2.4.7          # via packaging
-pytest-cov==2.8.1         # via -r test.in
-pytest==5.4.1             # via -r test.in, pytest-cov
-python-dateutil==2.8.1    # via freezegun
-requests-mock==1.7.0      # via -r test.in
-wcwidth==0.1.9            # via pytest
-zipp==3.1.0               # via importlib-metadata
+attrs==19.3.0
+    # via
+    #   -r base.in
+    #   pytest
+certifi==2020.4.5.1
+    # via
+    #   python-telegram-bot
+    #   requests
+cffi==1.14.0
+    # via cryptography
+chardet==3.0.4
+    # via requests
+coverage==5.0.4
+    # via pytest-cov
+cryptography==2.9
+    # via python-telegram-bot
+decorator==4.4.2
+    # via python-telegram-bot
+freezegun==0.3.15
+    # via -r test.in
+future==0.18.2
+    # via python-telegram-bot
+gitdb==4.0.4
+    # via gitpython
+gitpython==3.1.1
+    # via -r base.in
+idna==2.9
+    # via requests
+more-itertools==8.2.0
+    # via pytest
+packaging==20.3
+    # via pytest
+pluggy==0.13.1
+    # via pytest
+py==1.10.0
+    # via pytest
+pycparser==2.20
+    # via cffi
+pyparsing==2.4.7
+    # via packaging
+pytest-cov==2.8.1
+    # via -r test.in
+pytest==5.4.1
+    # via
+    #   -r test.in
+    #   pytest-cov
+python-dateutil==2.8.1
+    # via freezegun
+python-telegram-bot==12.6.1
+    # via -r base.in
+pytz==2019.3
+    # via tzlocal
+requests-mock==1.7.0
+    # via -r test.in
+requests==2.23.0
+    # via
+    #   -r base.in
+    #   requests-mock
+six==1.14.0
+    # via
+    #   cryptography
+    #   freezegun
+    #   packaging
+    #   python-dateutil
+    #   requests-mock
+smmap==3.0.2
+    # via gitdb
+tornado==6.0.4
+    # via python-telegram-bot
+tzlocal==2.0.0
+    # via -r base.in
+urllib3==1.25.8
+    # via requests
+wcwidth==0.1.9
+    # via pytest
