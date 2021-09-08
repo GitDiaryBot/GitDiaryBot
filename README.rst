@@ -1,7 +1,7 @@
 GitDiaryBot
 ===========
 
-This file is intended for developers, if you want to use GitDiaryBot, go to [it's page](https://gitdiarybot.github.io/).
+This file is intended for developers, if you want to use GitDiaryBot, go to `usage page <https://gitdiarybot.github.io/>`.
 
 Telegram bot, that writes incoming messages to a text file and synchronizes using Git repository.
 In addition to plain text input it also understands locations, voice recordings and photos.
