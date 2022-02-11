@@ -12,7 +12,7 @@ importlib-metadata==1.6.0  # via pluggy, pytest
 more-itertools==8.2.0     # via pytest
 packaging==20.3           # via pytest
 pluggy==0.13.1            # via pytest
-py==1.8.1                 # via pytest
+py==1.11.0                 # via pytest
 pyparsing==2.4.7          # via packaging
 pytest-cov==2.8.1         # via -r test.in
 pytest==5.4.1             # via -r test.in, pytest-cov
