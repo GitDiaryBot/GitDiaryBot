@@ -9,7 +9,7 @@ attrs==19.3.0             # via -r base.in
 certifi==2020.4.5.1       # via python-telegram-bot, requests
 cffi==1.14.0              # via cryptography
 chardet==3.0.4            # via requests
-cryptography==2.9         # via python-telegram-bot
+cryptography==36.0.1         # via python-telegram-bot
 decorator==4.4.2          # via python-telegram-bot
 future==0.18.2            # via python-telegram-bot
 gitdb==4.0.4              # via gitpython
