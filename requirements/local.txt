@@ -42,7 +42,7 @@ pyflakes==2.1.1           # via flake8
 pygments==2.6.1           # via ipython, readme-renderer
 pylint==2.12.2             # via -r local.in
 pytype==2020.4.1          # via -r local.in
-pyyaml==5.3.1             # via pytype
+pyyaml==6.0             # via pytype
 readme-renderer==26.0     # via twine
 requests-toolbelt==0.9.1  # via twine
 toml==0.10.0              # via tox
