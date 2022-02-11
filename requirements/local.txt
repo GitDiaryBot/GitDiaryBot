@@ -21,7 +21,7 @@ importlab==0.5.1          # via pytype
 importlib-resources==1.4.0  # via virtualenv
 ipdb==0.13.2              # via -r local.in
 ipython-genutils==0.2.0   # via traitlets
-ipython==7.13.0           # via ipdb
+ipython==8.0.1           # via ipdb
 isort==4.3.21             # via pylint
 jedi==0.16.0              # via ipython
 keyring==21.2.0           # via twine
