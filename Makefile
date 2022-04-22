@@ -1,6 +1,7 @@
 .PHONY: clean clean-test clean-pyc clean-build docs help
 .DEFAULT_GOAL := help
 
+BROWSER := open
 define PRINT_HELP_PYSCRIPT
 import re, sys
 
@@ -51,6 +52,7 @@ coverage: ## check code coverage quickly with the default Python
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/diarybot.rst
 	rm -f docs/modules.rst
+	pydeps diarybot/ -o docs/pydeps.svg --no-show
 	sphinx-apidoc -o docs/ diarybot
 	$(MAKE) -C docs clean html
 	$(BROWSER) docs/_build/html/index.html
@@ -72,6 +74,7 @@ install: ## install the package with dev dependencies
 
 sync: ## completely sync installed packages with dev dependencies
 	pip-sync requirements/local.txt
+	pip install -e .
 
 upgrade:
 	tox -e upgrade

@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'GitDiaryBot'
-copyright = '2022, Peter Demin'
+copyright = '2022, Peter Demin'  # pylint: disable=redefined-builtin
 author = 'Peter Demin'
 
 
@@ -28,6 +28,8 @@ author = 'Peter Demin'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.viewcode',
+    'sphinx.ext.autodoc',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -50,3 +52,9 @@ html_theme = 'alabaster'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+
+# sphinx.ext.autodoc options
+# https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#configuration
+autodoc_typehints_format = 'short'
+add_module_names = False

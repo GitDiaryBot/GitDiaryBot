@@ -10,7 +10,13 @@ Welcome to GitDiaryBot's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   diarybot.rst
+   modules.rst
 
+
+.. image:: pydeps.svg
+  :alt: Module dependencies chart
+  :target: _images/pydeps.svg
 
 Indices and tables
 ==================
