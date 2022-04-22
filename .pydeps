@@ -1,0 +1,7 @@
+[pydeps]
+max_bacon = 2
+cluster = True
+exclude =
+    attr
+    requests
+    telegram
