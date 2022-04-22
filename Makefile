@@ -67,8 +67,11 @@ dist: clean ## builds source and wheel package
 	python setup.py bdist_wheel
 	ls -l dist
 
-install: clean  ## install the package with dev dependencies
+install: ## install the package with dev dependencies
 	pip install -e . -r requirements/local.txt
+
+sync: ## completely sync installed packages with dev dependencies
+	pip-sync requirements/local.txt
 
 upgrade:
 	tox -e upgrade

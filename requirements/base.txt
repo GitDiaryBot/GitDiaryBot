@@ -27,7 +27,7 @@ certifi==2021.10.8
     #   -c requirements/local.txt
     #   python-telegram-bot
     #   requests
-charset-normalizer==2.0.11
+charset-normalizer==2.0.12
     # via
     #   -c requirements/local.txt
     #   requests
@@ -51,7 +51,7 @@ python-telegram-bot==13.11
     # via
     #   -c requirements/local.txt
     #   -r requirements/base.in
-pytz==2021.3
+pytz==2022.1
     # via
     #   -c requirements/local.txt
     #   apscheduler
@@ -76,20 +76,20 @@ tornado==6.1
     # via
     #   -c requirements/local.txt
     #   python-telegram-bot
-typing-extensions==4.0.1
+typing-extensions==4.1.1
     # via
     #   -c requirements/local.txt
     #   gitpython
-tzdata==2021.5
+tzdata==2022.1
     # via
     #   -c requirements/local.txt
     #   pytz-deprecation-shim
-tzlocal==4.1
+tzlocal==4.2
     # via
     #   -c requirements/local.txt
     #   -r requirements/base.in
     #   apscheduler
-urllib3==1.26.8
+urllib3==1.26.9
     # via
     #   -c requirements/local.txt
     #   requests
