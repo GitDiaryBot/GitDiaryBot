@@ -2,10 +2,10 @@ from diarybot.events import LocationReceived
 from diarybot.core.recorder import TextRecorder
 from diarybot.transformers.location import LocationTransformer
 from diarybot.tenant_config import TenantConfig
-from .interface import RecordingEventHandler
+from .interface import EventHandler
 
 
-class LocationEventHandler(RecordingEventHandler):
+class LocationEventHandler(EventHandler):
     def __init__(self, recorder: TextRecorder, location_transformer: LocationTransformer) -> None:
         self._recorder = recorder
         self._location_transformer = location_transformer

@@ -11,10 +11,7 @@ class EventHandler(abc.ABC):
     def handle_event(self, event: DiaryEvent) -> None:
         """Handle incoming event."""
 
-
-class RecordingEventHandler(EventHandler, metaclass=abc.ABCMeta):
-
     @classmethod
     @abc.abstractmethod
-    def load(cls, tenant_config: TenantConfig, recorder: TextRecorder) -> 'RecordingEventHandler':
+    def load(cls, tenant_config: TenantConfig, recorder: TextRecorder) -> 'EventHandler':
         """Return new instance of this event handler."""

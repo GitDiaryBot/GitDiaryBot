@@ -2,10 +2,10 @@ from diarybot.events import PhotoReceived
 from diarybot.core.recorder import TextRecorder
 from diarybot.transformers.photo import PhotoTransformer
 from diarybot.tenant_config import TenantConfig
-from .interface import RecordingEventHandler
+from .interface import EventHandler
 
 
-class PhotoEventHandler(RecordingEventHandler):
+class PhotoEventHandler(EventHandler):
     def __init__(self, recorder: TextRecorder, photo_transformer: PhotoTransformer) -> None:
         self._recorder = recorder
         self._photo_transformer = photo_transformer

@@ -3,10 +3,10 @@ from diarybot.core.recorder import TextRecorder
 from diarybot.core.speech_to_text import SpeechToTextClient
 from diarybot.transformers.voice import VoiceTransformer
 from diarybot.tenant_config import TenantConfig
-from .interface import RecordingEventHandler
+from .interface import EventHandler
 
 
-class VoiceEventHandler(RecordingEventHandler):
+class VoiceEventHandler(EventHandler):
     def __init__(self, recorder: TextRecorder, voice_transformer: VoiceTransformer) -> None:
         self._recorder = recorder
         self._voice_transformer = voice_transformer

@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Type, List, cast
+from typing import Dict, Type, List
 
 import git
 
@@ -7,7 +7,7 @@ from diarybot.core.git_sync import GitSync
 from diarybot.core.journal import PlainTextJournal
 from diarybot.core.buy_list import BuyList
 from diarybot.core.recorder import TextRecorder
-from diarybot.handlers.interface import EventHandler, RecordingEventHandler
+from diarybot.handlers.interface import EventHandler
 from diarybot.tenant_config import TenantConfig
 from diarybot.skill_interface import Skill
 from diarybot.dgit import Git
@@ -26,8 +26,7 @@ class HandlerLoader:
         recorder = self._load_recorder(self._tenant_config)
         handlers = {}
         for skill in self._skills:
-            handler_class = cast(RecordingEventHandler, skill.event_handler_class)
-            handlers[skill.event_class] = handler_class.load(
+            handlers[skill.event_class] = skill.event_handler_class.load(
                 tenant_config=self._tenant_config,
                 recorder=recorder,
             )

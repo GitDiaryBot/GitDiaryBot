@@ -1,10 +1,10 @@
 from diarybot.events import TextReceived
 from diarybot.core.recorder import TextRecorder
 from diarybot.tenant_config import TenantConfig
-from .interface import RecordingEventHandler
+from .interface import EventHandler
 
 
-class TextEventHandler(RecordingEventHandler):
+class TextEventHandler(EventHandler):
     def __init__(self, recorder: TextRecorder) -> None:
         self._recorder = recorder
 
