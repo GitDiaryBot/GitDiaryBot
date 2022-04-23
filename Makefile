@@ -50,10 +50,9 @@ coverage: ## check code coverage quickly with the default Python
 		coverage html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/diarybot.rst
-	rm -f docs/modules.rst
-	pydeps diarybot/ -o docs/pydeps.svg --no-show
-	sphinx-apidoc -o docs/ diarybot
+	rm -rf docs/g/
+	sphinx-apidoc --ext-autodoc --force --output-dir docs/g/ --no-toc diarybot
+	pydeps diarybot/ -o docs/g/pydeps.svg --no-show
 	$(MAKE) -C docs clean html
 	$(BROWSER) docs/_build/html/index.html
 

@@ -78,3 +78,4 @@ integration_tests/messages/
 integration_tests/test_messages.py
 diary.md
 .pytype/
+docs/g/
