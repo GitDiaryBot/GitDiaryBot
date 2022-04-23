@@ -8,5 +8,3 @@ pip-compile-multi
 ipdb
 tox
 twine
-sphinx<4.4.0  # for compatibility with flake8
-pydeps

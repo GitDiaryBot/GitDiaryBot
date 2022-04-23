@@ -18,6 +18,10 @@ help:
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
+clean-docs: ## remove docs auto-generated files
+	rm -rf docs/_build/
+	rm -rf docs/g/
+
 clean-build: ## remove build artifacts
 	rm -rf build/
 	rm -rf dist/
@@ -50,10 +54,7 @@ coverage: ## check code coverage quickly with the default Python
 		coverage html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -rf docs/g/
-	sphinx-apidoc --ext-autodoc --force --output-dir docs/g/ --no-toc diarybot
-	pydeps diarybot/ -o docs/g/pydeps.svg --no-show
-	$(MAKE) -C docs clean html
+	tox -e docs
 	$(BROWSER) docs/_build/html/index.html
 
 servedocs: docs ## compile the docs watching for changes

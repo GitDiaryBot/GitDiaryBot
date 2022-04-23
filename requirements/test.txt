@@ -7,58 +7,35 @@
 #
 -r base.txt
 coverage[toml]==6.2
-    # via
-    #   -c requirements/local.txt
-    #   pytest-cov
+    # via pytest-cov
 freezegun==1.2.1
-    # via
-    #   -c requirements/local.txt
-    #   -r requirements/test.in
+    # via -r requirements/test.in
 importlib-metadata==4.2.0
     # via
-    #   -c requirements/local.txt
     #   pluggy
     #   pytest
 iniconfig==1.1.1
-    # via
-    #   -c requirements/local.txt
-    #   pytest
+    # via pytest
 packaging==21.3
-    # via
-    #   -c requirements/local.txt
-    #   pytest
+    # via pytest
 pluggy==1.0.0
-    # via
-    #   -c requirements/local.txt
-    #   pytest
+    # via pytest
 py==1.11.0
-    # via
-    #   -c requirements/local.txt
-    #   pytest
+    # via pytest
 pyparsing==3.0.8
-    # via
-    #   -c requirements/local.txt
-    #   packaging
+    # via packaging
 pytest==7.0.1
     # via
-    #   -c requirements/local.txt
     #   -r requirements/test.in
     #   pytest-cov
 pytest-cov==3.0.0
-    # via
-    #   -c requirements/local.txt
-    #   -r requirements/test.in
+    # via -r requirements/test.in
 python-dateutil==2.8.2
-    # via
-    #   -c requirements/local.txt
-    #   freezegun
+    # via freezegun
 requests-mock==1.9.3
-    # via
-    #   -c requirements/local.txt
-    #   -r requirements/test.in
+    # via -r requirements/test.in
 tomli==1.2.3
     # via
-    #   -c requirements/local.txt
     #   coverage
     #   pytest
 
