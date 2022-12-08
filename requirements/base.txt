@@ -8,14 +8,10 @@
 apscheduler==3.6.3
     # via python-telegram-bot
 attrs==21.4.0
-    # via -r requirements/base.in
-backports.zoneinfo==0.2.1
-    # via
-    #   pytz-deprecation-shim
-    #   tzlocal
+    # via -r base.in
 cachetools==4.2.2
     # via python-telegram-bot
-certifi==2021.10.8
+certifi==2022.12.7
     # via
     #   python-telegram-bot
     #   requests
@@ -24,13 +20,11 @@ charset-normalizer==2.0.12
 gitdb==4.0.9
     # via gitpython
 gitpython==3.1.18
-    # via -r requirements/base.in
+    # via -r base.in
 idna==3.3
     # via requests
-importlib-resources==5.4.0
-    # via backports.zoneinfo
 python-telegram-bot==13.11
-    # via -r requirements/base.in
+    # via -r base.in
 pytz==2022.1
     # via
     #   apscheduler
@@ -38,25 +32,21 @@ pytz==2022.1
 pytz-deprecation-shim==0.1.0.post0
     # via tzlocal
 requests==2.27.1
-    # via -r requirements/base.in
+    # via -r base.in
 six==1.16.0
     # via apscheduler
 smmap==5.0.0
     # via gitdb
 tornado==6.1
     # via python-telegram-bot
-typing-extensions==4.1.1
-    # via gitpython
 tzdata==2022.1
     # via pytz-deprecation-shim
 tzlocal==4.2
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   apscheduler
 urllib3==1.26.9
     # via requests
-zipp==3.6.0
-    # via importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
